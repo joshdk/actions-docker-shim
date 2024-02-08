@@ -38,9 +38,10 @@ jobs:
       - uses: docker/build-push-action@v5
         with:
           builder: ${{ steps.buildx.outputs.name }}
+          provenance: false
+          push: true
           tags: |
             ghcr.io/joshdk/actions-docker-shim:${{ github.sha }}
-          push: true
           build-args: |
             CREATED=${{ steps.args.outputs.created }}
             REVISION=${{ steps.args.outputs.revision }}
