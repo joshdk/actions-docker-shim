@@ -22,3 +22,12 @@ func Login(username, password string) error {
 
 	return cmd.Run()
 }
+
+// Pull executes a docker pull of the given image.
+func Pull(image string) error {
+	cmd := exec.Command("/usr/bin/docker", "pull", image)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
