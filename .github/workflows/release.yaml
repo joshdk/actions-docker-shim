@@ -1,13 +1,12 @@
-name: Build
+name: Release
 on:
-  pull_request:
   push:
-    branches:
-      - "master"
+    tags:
+      - "v*.*.*"
 
 jobs:
-  build:
-    name: Build
+  release:
+    name: Release
     runs-on: ubuntu-22.04
 
     permissions:
@@ -16,8 +15,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: docker/setup-buildx-action@v3
         id: buildx
@@ -35,11 +32,20 @@ jobs:
           echo "revision=$(git rev-parse HEAD)"           >> $GITHUB_OUTPUT
           echo "version=$(git describe --tags)"           >> $GITHUB_OUTPUT
 
+      - name: output semver tags
+        id: tags
+        run: |
+          echo "major=$(echo ${{ github.ref_name }} | cut -d. -f1)"   >> $GITHUB_OUTPUT
+          echo "minor=$(echo ${{ github.ref_name }} | cut -d. -f1,2)" >> $GITHUB_OUTPUT
+
       - uses: docker/build-push-action@v5
         with:
           builder: ${{ steps.buildx.outputs.name }}
           tags: |
-            ghcr.io/joshdk/actions-docker-shim:${{ github.sha }}
+            ghcr.io/joshdk/actions-docker-shim:latest
+            ghcr.io/joshdk/actions-docker-shim:${{ github.ref_name }}
+            ghcr.io/joshdk/actions-docker-shim:${{ steps.tags.outputs.minor }}
+            ghcr.io/joshdk/actions-docker-shim:${{ steps.tags.outputs.major }}
           push: true
           build-args: |
             CREATED=${{ steps.args.outputs.created }}
