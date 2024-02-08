@@ -57,5 +57,5 @@ func mainCmd() error {
 		return err
 	}
 
-	return nil
+	return docker.Run(image, flag.Args())
 }
