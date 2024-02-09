@@ -9,6 +9,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/joshdk/actions-docker-shim/docker"
 	flag "github.com/spf13/pflag"
@@ -23,19 +24,25 @@ func main() {
 
 //nolint:forbidigo,wsl
 func mainCmd() error {
+	fmt.Printf("::group::%s\n", "Debug")
+	for _, env := range os.Environ() {
+		fmt.Println(env)
+	}
+	fmt.Println("::endgroup::")
+
 	var image string
 	flag.StringVar(&image, "image", "", "ghcr.io image to run")
 	flag.Parse()
 
 	if image == "" {
-		image = fmt.Sprintf("ghcr.io/%s:%s", os.Getenv("GITHUB_REPOSITORY"), os.Getenv("GITHUB_ACTION_REF"))
+		image = fmt.Sprintf("ghcr.io/%s:%s", strings.ToLower(os.Getenv("GITHUB_ACTION_REPOSITORY")), os.Getenv("GITHUB_ACTION_REF"))
 	}
 
 	var token string
 	if value := os.Getenv("GITHUB_TOKEN"); value != "" {
 		// Environment variable named "GITHUB_TOKEN".
 		token = value
-	} else if value := os.Getenv("INPUT_GITHUB_TOKEN"); value != "" {
+	} else if value := os.Getenv("INPUT_GITHUB-TOKEN"); value != "" {
 		// Input named "github-token".
 		token = value
 	} else if value := os.Getenv("INPUT_TOKEN"); value != "" {
