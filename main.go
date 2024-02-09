@@ -9,6 +9,8 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/joshdk/actions-docker-shim/docker"
 )
 
 func main() {
@@ -18,6 +20,26 @@ func main() {
 	}
 }
 
+//nolint:forbidigo,wsl
 func mainCmd() error {
+	var token string
+	if value := os.Getenv("GITHUB_TOKEN"); value != "" {
+		// Environment variable named "GITHUB_TOKEN".
+		token = value
+	} else if value := os.Getenv("INPUT_GITHUB_TOKEN"); value != "" {
+		// Input named "github-token".
+		token = value
+	} else if value := os.Getenv("INPUT_TOKEN"); value != "" {
+		// Input named "token".
+		token = value
+	}
+
+	fmt.Printf("::group::%s\n", "Docker login")
+	err := docker.Login(os.Getenv("GITHUB_ACTOR"), token)
+	fmt.Println("::endgroup::")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

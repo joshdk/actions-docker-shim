@@ -16,6 +16,10 @@ linters:
     - structcheck
     - varcheck
 
+    # Linters that are not used for this project.
+    - wrapcheck
+    - depguard
+
 linters-settings:
   goheader:
     template: |-
