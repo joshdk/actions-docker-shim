@@ -22,6 +22,8 @@ func main() {
 
 //nolint:forbidigo,wsl
 func mainCmd() error {
+	image := fmt.Sprintf("ghcr.io/%s:%s", os.Getenv("GITHUB_REPOSITORY"), os.Getenv("GITHUB_ACTION_REF"))
+
 	var token string
 	if value := os.Getenv("GITHUB_TOKEN"); value != "" {
 		// Environment variable named "GITHUB_TOKEN".
@@ -36,6 +38,13 @@ func mainCmd() error {
 
 	fmt.Printf("::group::%s\n", "Docker login")
 	err := docker.Login(os.Getenv("GITHUB_ACTOR"), token)
+	fmt.Println("::endgroup::")
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("::group::%s\n", "Docker pull")
+	err = docker.Pull(image)
 	fmt.Println("::endgroup::")
 	if err != nil {
 		return err
