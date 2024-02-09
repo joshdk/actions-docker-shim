@@ -11,6 +11,7 @@ import (
 	"os"
 
 	"github.com/joshdk/actions-docker-shim/docker"
+	flag "github.com/spf13/pflag"
 )
 
 func main() {
@@ -22,7 +23,13 @@ func main() {
 
 //nolint:forbidigo,wsl
 func mainCmd() error {
-	image := fmt.Sprintf("ghcr.io/%s:%s", os.Getenv("GITHUB_REPOSITORY"), os.Getenv("GITHUB_ACTION_REF"))
+	var image string
+	flag.StringVar(&image, "image", "", "ghcr.io image to run")
+	flag.Parse()
+
+	if image == "" {
+		image = fmt.Sprintf("ghcr.io/%s:%s", os.Getenv("GITHUB_REPOSITORY"), os.Getenv("GITHUB_ACTION_REF"))
+	}
 
 	var token string
 	if value := os.Getenv("GITHUB_TOKEN"); value != "" {
