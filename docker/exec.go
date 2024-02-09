@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"syscall"
 )
 
 // Login executes a docker login to ghcr.io with the given username and
@@ -30,4 +31,45 @@ func Pull(image string) error {
 	cmd.Stderr = os.Stderr
 
 	return cmd.Run()
+}
+
+// Run executes a docker run replicating the GitHub Actions Docker runtime. If
+// execution is successful, the current process is replaced and this function
+// will not return.
+func Run(image string, cmdargs []string) error {
+	args := []string{
+		"docker", "run",
+		"--rm",
+		"--workdir", "/github/workspace",
+		"-v", "/var/run/docker.sock:/var/run/docker.sock",
+		"-v", "/home/runner/work/_temp/_github_home:/github/home",
+		"-v", "/home/runner/work/_temp/_github_workflow:/github/workflow",
+		"-v", "/home/runner/work/_temp/_runner_file_commands:/github/file_commands",
+		"-v", "/home/runner/work/go-action/go-action:/github/workspace",
+	}
+
+	environ := os.Environ()
+	envs := environ[:0]
+
+	// Loop over the current set of environment variables and either pass them
+	// through to the docker run command arguments, or drop them (certain
+	// environment variables are not explicitly passed).
+	for _, env := range environ {
+		key := strings.SplitN(env, "=", 2)[0] //nolint:gomnd
+		switch key {
+		case "HOSTNAME", "PATH":
+			// Drop these environment variables.
+			continue
+		default:
+			// Keep these environment variables and add them to the docker run
+			// command line.
+			envs = append(envs, env)
+			args = append(args, "-e", key)
+		}
+	}
+
+	args = append(args, image)
+	args = append(args, cmdargs...)
+
+	return syscall.Exec("/usr/bin/docker", args, envs) //nolint:gosec
 }
