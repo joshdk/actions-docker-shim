@@ -27,7 +27,9 @@ func mainCmd() error {
 	var image string
 	flag.StringVar(&image, "image", "", "ghcr.io image to run")
 	var tokenEnv string
-	flag.StringVar(&tokenEnv, "token-env", "", "env var to use for ghcr.io token")
+	flag.StringVar(&tokenEnv, "token-env", "", "env var to use for github token")
+	var username string
+	flag.StringVar(&username, "username", "", "username for github token")
 	flag.Parse()
 
 	if image == "" {
@@ -51,8 +53,12 @@ func mainCmd() error {
 		token = value
 	}
 
+	if username == "" {
+		username = os.Getenv("GITHUB_ACTOR")
+	}
+
 	fmt.Printf("::group::%s\n", "Docker login")
-	err := docker.Login(os.Getenv("GITHUB_ACTOR"), token)
+	err := docker.Login(username, token)
 	fmt.Println("::endgroup::")
 	if err != nil {
 		return err
