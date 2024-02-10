@@ -26,6 +26,8 @@ func main() {
 func mainCmd() error {
 	var image string
 	flag.StringVar(&image, "image", "", "ghcr.io image to run")
+	var tokenEnv string
+	flag.StringVar(&tokenEnv, "token-env", "", "env var to use for ghcr.io token")
 	flag.Parse()
 
 	if image == "" {
@@ -35,7 +37,10 @@ func mainCmd() error {
 	}
 
 	var token string
-	if value := os.Getenv("GITHUB_TOKEN"); value != "" {
+	if tokenEnv != "" {
+		// Environment variable named by the token-env flag.
+		token = os.Getenv(tokenEnv)
+	} else if value := os.Getenv("GITHUB_TOKEN"); value != "" {
 		// Environment variable named "GITHUB_TOKEN".
 		token = value
 	} else if value := os.Getenv("INPUT_GITHUB-TOKEN"); value != "" {
