@@ -24,17 +24,21 @@ func main() {
 
 //nolint:forbidigo,wsl
 func mainCmd() error {
-	var image string
-	flag.StringVar(&image, "image", "", "ghcr.io image to run")
+	var imageRepo string
+	flag.StringVar(&imageRepo, "image", "", "ghcr.io image to run")
+	var imageTag string
+	flag.StringVar(&imageTag, "image-tag", "", "ghcr.io image tag to run")
 	var tokenEnv string
 	flag.StringVar(&tokenEnv, "token-env", "", "env var to use for github token")
 	flag.Parse()
 
-	if image == "" {
-		repository := os.Getenv("GITHUB_ACTION_REPOSITORY")
-		ref := os.Getenv("GITHUB_ACTION_REF")
-		image = fmt.Sprintf("ghcr.io/%s:%s", strings.ToLower(repository), ref)
+	if imageRepo == "" {
+		imageRepo = os.Getenv("GITHUB_ACTION_REPOSITORY")
 	}
+	if imageTag == "" {
+		imageTag = os.Getenv("GITHUB_ACTION_REF")
+	}
+	image := fmt.Sprintf("ghcr.io/%s:%s", strings.ToLower(imageRepo), imageTag)
 
 	var token string
 	if tokenEnv != "" {
