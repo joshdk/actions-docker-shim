@@ -25,11 +25,11 @@ func main() {
 //nolint:forbidigo,wsl
 func mainCmd() error {
 	var imageRepo string
-	flag.StringVar(&imageRepo, "image", "", "ghcr.io image to run")
+	flag.StringVar(&imageRepo, "shim-image", "", "ghcr.io image to run")
 	var imageTag string
-	flag.StringVar(&imageTag, "image-tag", "", "ghcr.io image tag to run")
+	flag.StringVar(&imageTag, "shim-image-tag", "", "ghcr.io image tag to run")
 	var tokenEnv string
-	flag.StringVar(&tokenEnv, "token-env", "", "env var to use for github token")
+	flag.StringVar(&tokenEnv, "shim-token-env", "", "env var to use for github token")
 	flag.Parse()
 
 	if imageRepo == "" {

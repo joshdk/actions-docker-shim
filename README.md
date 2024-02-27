@@ -93,7 +93,7 @@ runs:
   using: docker
   image: docker://ghcr.io/joshdk/actions-docker-shim:v0.0.2
 +  args:
-+    - --image-tag=snapshot
++    - --shim-image-tag=snapshot
 ```
 
 If your image isn't named the same as your action repository, that can be overridden as well.
@@ -103,8 +103,8 @@ runs:
   using: docker
   image: docker://ghcr.io/joshdk/actions-docker-shim:v0.0.2
   args:
-    - --image-tag=snapshot
-+    - --image=example/some-other-image
+    - --shim-image-tag=snapshot
++    - --shim-image=example/some-other-image
 ```
 
 ### Authentication
@@ -125,7 +125,7 @@ runs:
   using: docker
   image: docker://ghcr.io/joshdk/actions-docker-shim:v0.0.2
 +  args:
-+    - --token-env=INPUT_CUSTOM-TOKEN
++    - --shim-token-env=INPUT_CUSTOM-TOKEN
 ```
 
 ## License
