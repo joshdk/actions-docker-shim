@@ -86,14 +86,25 @@ jobs:
       - uses: Example/example-action@a35f...b316
 ```
 
-If you want your action to use a different image, then you can specify one manually in `action.yml`.
+If you want your action to use a specific image tag, then you can set one manually in `action.yml`.
 
 ```diff
 runs:
   using: docker
   image: docker://ghcr.io/joshdk/actions-docker-shim:v0.0.2
 +  args:
-+    - --image=ghcr.io/example/example-action:snapshot
++    - --image-tag=snapshot
+```
+
+If your image isn't named the same as your action repository, that can be overridden as well.
+
+```diff
+runs:
+  using: docker
+  image: docker://ghcr.io/joshdk/actions-docker-shim:v0.0.2
+  args:
+    - --image-tag=snapshot
++    - --image=example/some-other-image
 ```
 
 ### Authentication
