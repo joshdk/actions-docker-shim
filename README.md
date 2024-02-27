@@ -35,7 +35,7 @@ description: An example action, wow!
 runs:
   using: docker
 -  image: docker://ghcr.io/example/example-action:v1.2.3
-+  image: docker://ghcr.io/joshdk/actions-docker-shim:v0.0.2
++  image: docker://ghcr.io/joshdk/actions-docker-shim:v0.1.0
 ```
 
 Modify the caller workflow to grant the `packages: read` permission so that your ghcr.io image can be pulled.
@@ -91,7 +91,7 @@ If you want your action to use a specific image tag, then you can set one manual
 ```diff
 runs:
   using: docker
-  image: docker://ghcr.io/joshdk/actions-docker-shim:v0.0.2
+  image: docker://ghcr.io/joshdk/actions-docker-shim:v0.1.0
 +  args:
 +    - --shim-image-tag=snapshot
 ```
@@ -101,7 +101,7 @@ If your image isn't named the same as your action repository, that can be overri
 ```diff
 runs:
   using: docker
-  image: docker://ghcr.io/joshdk/actions-docker-shim:v0.0.2
+  image: docker://ghcr.io/joshdk/actions-docker-shim:v0.1.0
   args:
     - --shim-image-tag=snapshot
 +    - --shim-image=example/some-other-image
@@ -123,7 +123,7 @@ inputs:
 
 runs:
   using: docker
-  image: docker://ghcr.io/joshdk/actions-docker-shim:v0.0.2
+  image: docker://ghcr.io/joshdk/actions-docker-shim:v0.1.0
 +  args:
 +    - --shim-token-env=INPUT_CUSTOM-TOKEN
 ```
