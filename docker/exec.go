@@ -13,11 +13,10 @@ import (
 	"syscall"
 )
 
-// Login executes a docker login to ghcr.io with the given username and
-// password.
-func Login(username, password string) error {
-	cmd := exec.Command("/usr/bin/docker", "login", "ghcr.io", "--username", username, "--password-stdin")
-	cmd.Stdin = strings.NewReader(password + "\n")
+// Login executes a docker login to ghcr.io with the given GitHub token.
+func Login(token string) error {
+	cmd := exec.Command("/usr/bin/docker", "login", "ghcr.io", "--username", "-", "--password-stdin")
+	cmd.Stdin = strings.NewReader(token + "\n")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
